@@ -1,10 +1,12 @@
 import uvicorn
 from fastapi import FastAPI, UploadFile, File, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 import torch
 import cv2
 import numpy as np
 import base64
+import os
 from model_utils import load_all_models, process_frame
 
 app = FastAPI()
@@ -18,10 +20,18 @@ app.add_middleware(
 )
 
 # Configuration
-EMOTION_PATH = "./checkpoints/best_model.pt"
-AGE_PATH = "./checkpoints/age_model_resnet.pt"
-CASCADE_PATH = "./checkpoints/haarcascade_frontalface_default.xml"
+BACKEND_DIR = os.path.dirname(os.path.abspath(__file__))
+PARENT_DIR = os.path.dirname(BACKEND_DIR)  # Go up from backend/ to root
+PUBLIC_DIR = os.path.join(PARENT_DIR, "public")  # Path to public folder
+
+EMOTION_PATH = os.path.join(BACKEND_DIR, "checkpoints/best_model.pt")
+AGE_PATH = os.path.join(BACKEND_DIR, "checkpoints/age_model_resnet.pt")
+CASCADE_PATH = os.path.join(BACKEND_DIR, "checkpoints/haarcascade_frontalface_default.xml")
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
+# Serve static files from public folder
+if os.path.exists(PUBLIC_DIR):
+    app.mount("/", StaticFiles(directory=PUBLIC_DIR, html=True), name="static")
 
 # Load models once at start
 emo_model, age_model, face_cascade = load_all_models(EMOTION_PATH, AGE_PATH, CASCADE_PATH, device)
@@ -53,4 +63,7 @@ async def predict(file: UploadFile = File(...)):
         return {"success": False, "error": str(e)}
 
 if __name__ == "__main__":
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    port = 8001
+    print(f"🚀 Starting AuraSense AI Backend on http://localhost:{port}")
+    print("=" * 70)
+    uvicorn.run(app, host="0.0.0.0", port=port)

@@ -20,7 +20,7 @@ let isLive = false;
 // API Configuration - works for both localhost and production
 const getApiUrl = () => {
     if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
-        return 'http://localhost:8000';
+        return 'http://localhost:8001';
     } else {
         return `${window.location.protocol}//${window.location.host}`;
     }

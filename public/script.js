@@ -20,7 +20,7 @@ let isLive = false;
 // API Configuration - works for both localhost and production
 const getApiUrl = () => {
     if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
-        return 'http://localhost:8000';
+        return 'http://localhost:8001';
     } else {
         return `${window.location.protocol}//${window.location.host}`;
     }
@@ -106,7 +106,7 @@ async function runInferenceLoop() {
         formData.append('file', blob);
 
         try {
-            const response = await fetch(`${API_URL}/api/predict`, {
+            const response = await fetch(`${API_URL}/predict`, {
                 method: 'POST',
                 body: formData
             });
@@ -146,7 +146,7 @@ async function uploadAndPredict(file) {
     const formData = new FormData();
     formData.append('file', file);
     try {
-        const response = await fetch(`${API_URL}/api/predict`, { method: 'POST', body: formData });
+        const response = await fetch(`${API_URL}/predict`, { method: 'POST', body: formData });
         const result = await response.json();
         const endTime = performance.now();
 
