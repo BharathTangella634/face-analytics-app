@@ -1,7 +1,7 @@
 {
-  "framework": "other",
+  "framework": "fastapi",
   "buildCommand": "echo 'Build complete'",
-  "outputDirectory": "frontend",
+  "outputDirectory": "public",
   "redirects": [
     {
       "source": "/api/:path*",
