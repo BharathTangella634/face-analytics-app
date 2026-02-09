@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AuraSense AI | Age & Emotion</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700&display=swap');
+        
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: #0f172a;
+        }
+
+        .glass-panel {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .gradient-text {
+            background: linear-gradient(135deg, #60a5fa 0%, #34d399 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .custom-shadow {
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+        }
+
+        #webcam-video {
+            transform: scaleX(-1);
+        }
+
+        .loader {
+            border-top-color: #34d399;
+            animation: spinner 1.5s linear infinite;
+        }
+
+        @keyframes spinner {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body class="text-slate-200 min-h-screen">
+
+    <!-- Header -->
+    <nav class="max-w-7xl mx-auto px-6 py-8 flex justify-between items-center">
+        <div class="flex items-center gap-3">
+            <div class="w-10 h-10 bg-blue-500 rounded-xl flex items-center justify-center shadow-lg shadow-blue-500/30">
+                <i class="fas fa-brain text-white text-xl"></i>
+            </div>
+            <h1 class="text-2xl font-bold tracking-tight">AuraSense <span class="gradient-text">AI</span></h1>
+        </div>
+        <div class="hidden md:flex gap-6 text-sm font-medium text-slate-400">
+            <span class="hover:text-white cursor-pointer transition">Docs</span>
+            <span class="hover:text-white cursor-pointer transition">Model V2.1</span>
+            <div class="flex items-center gap-2 px-3 py-1 rounded-full bg-slate-800 border border-slate-700">
+                <div class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
+                <span class="text-xs text-slate-300">System Ready</span>
+            </div>
+        </div>
+    </nav>
+
+    <main class="max-w-7xl mx-auto px-6 pb-20 grid grid-cols-1 lg:grid-cols-12 gap-8">
+        
+        <!-- Left Column: Controls & Input -->
+        <div class="lg:col-span-5 space-y-6">
+            <div class="glass-panel p-8 rounded-3xl custom-shadow">
+                <h2 class="text-xl font-semibold mb-6 flex items-center gap-3">
+                    <i class="fas fa-camera text-blue-400"></i>
+                    Select Input Source
+                </h2>
+
+                <div class="grid grid-cols-2 gap-4 mb-8">
+                    <button id="mode-upload" class="flex flex-col items-center justify-center p-4 rounded-2xl bg-blue-600/20 border border-blue-500/50 hover:bg-blue-600/30 transition-all group">
+                        <i class="fas fa-cloud-upload-alt text-2xl mb-2 text-blue-400 group-hover:scale-110 transition"></i>
+                        <span class="text-sm font-medium">Upload File</span>
+                    </button>
+                    <button id="mode-webcam" class="flex flex-col items-center justify-center p-4 rounded-2xl bg-slate-800/50 border border-slate-700 hover:border-emerald-500/50 transition-all group">
+                        <i class="fas fa-video text-2xl mb-2 text-slate-400 group-hover:text-emerald-400 group-hover:scale-110 transition"></i>
+                        <span class="text-sm font-medium">Live Camera</span>
+                    </button>
+                </div>
+
+                <!-- Input Area -->
+                <div class="relative rounded-2xl overflow-hidden bg-black/40 border border-slate-700 aspect-video flex items-center justify-center group">
+                    <video id="webcam-video" class="hidden w-full h-full object-cover" autoplay playsinline></video>
+                    <div id="upload-placeholder" class="text-center p-6">
+                        <i class="fas fa-images text-4xl text-slate-600 mb-4"></i>
+                        <p class="text-slate-500 text-sm">Drag and drop or click to upload</p>
+                    </div>
+                    <input type="file" id="file-input" class="hidden" accept="image/*">
+                </div>
+
+                <div class="mt-6 flex flex-col gap-3">
+                    <button id="action-btn" class="hidden w-full py-4 bg-gradient-to-r from-blue-600 to-blue-500 text-white font-bold rounded-2xl shadow-xl shadow-blue-600/20 hover:scale-[1.02] active:scale-[0.98] transition">
+                        ANALYZE CURRENT FRAME
+                    </button>
+                    <p class="text-[10px] text-slate-500 text-center uppercase tracking-widest">Supports JPG, PNG • Max 5MB</p>
+                </div>
+            </div>
+
+            <!-- Model Details Card -->
+            <div class="glass-panel p-6 rounded-3xl border border-slate-700/50">
+                <h3 class="text-sm font-bold text-slate-400 uppercase tracking-wider mb-4">Engine Metrics</h3>
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="bg-slate-800/50 p-3 rounded-xl border border-slate-700">
+                        <p class="text-[10px] text-slate-500">Latency</p>
+                        <p class="text-lg font-semibold" id="stat-latency">-- ms</p>
+                    </div>
+                    <div class="bg-slate-800/50 p-3 rounded-xl border border-slate-700">
+                        <p class="text-[10px] text-slate-500">Faces Detected</p>
+                        <p class="text-lg font-semibold" id="stat-faces">0</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Column: Results -->
+        <div class="lg:col-span-7">
+            <div class="glass-panel p-8 rounded-3xl custom-shadow h-full flex flex-col">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-xl font-semibold flex items-center gap-3">
+                        <i class="fas fa-microchip text-emerald-400"></i>
+                        AI Inference Result
+                    </h2>
+                    <div id="loading-spinner" class="hidden flex items-center gap-2 text-emerald-400 text-sm">
+                        <div class="loader ease-linear rounded-full border-2 border-t-2 border-gray-200 h-4 w-4"></div>
+                        <span>Processing...</span>
+                    </div>
+                </div>
+
+                <div class="flex-1 relative rounded-2xl overflow-hidden bg-slate-900 border border-slate-700 flex items-center justify-center min-h-[400px]">
+                    <img id="result-img" class="hidden max-w-full max-h-full object-contain">
+                    <div id="result-placeholder" class="text-center">
+                        <div class="w-20 h-20 bg-slate-800 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <i class="fas fa-chart-line text-slate-600 text-2xl"></i>
+                        </div>
+                        <p class="text-slate-500">Awaiting analysis data</p>
+                    </div>
+                </div>
+
+                <!-- Detailed Stats Table -->
+                <div id="predictions-list" class="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <!-- Prediction cards will be injected here -->
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Hidden Canvas for capturing webcam frames -->
+    <canvas id="capture-canvas" class="hidden"></canvas>
+
+    <script src="script.js"></script>
+</body>
+</html>

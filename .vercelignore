@@ -1,0 +1,20 @@
+# Don't deploy these files/folders
+FER_image.py
+FER_live_cam.py
+app.py
+models/
+.git
+.gitattributes
+*.md
+.vscode
+.idea
+__pycache__
+*.pyc
+.pytest_cache
+.coverage
+venv/
+env/
+.env.local
+.next
+out/
+node_modules/

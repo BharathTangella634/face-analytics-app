@@ -1,0 +1,20 @@
+{
+  "name": "aurasense-ai",
+  "version": "1.0.0",
+  "description": "Face Analytics App - Age & Emotion Detection",
+  "main": "frontend/index.html",
+  "scripts": {
+    "dev": "cd backend && python main.py",
+    "build": "echo 'Build complete'",
+    "start": "cd backend && python main.py"
+  },
+  "keywords": [
+    "emotion-detection",
+    "age-estimation",
+    "face-recognition",
+    "deep-learning",
+    "pytorch"
+  ],
+  "author": "AuraSense Team",
+  "license": "MIT"
+}
